@@ -38,6 +38,11 @@ LABEL maintainer="Microsoft" \
 # RUN curl https://azure-dev.azureedge.net/azd/standalone/release/azd-linux-amd64.tar.gz
 RUN curl -fsSL https://aka.ms/install-azd.sh | bash -s -- --platform "linux" --architecture "amd64" --extension "tar.gz"
 
+# resolve this: https://github.com/golang/go/issues/59304
+# with this fix: https://github.com/gohugoio/hugo/issues/10839#issuecomment-1499463944
+RUN apk add --no-cache gcompat libc6-compat \
+    && ln -s /lib/libc.so.6 /usr/lib/libresolv.so.2
+
 # Grab all .sh files from actions.d, copy to
 # root actions.d, and ake them all executable
 COPY actions.d/* /actions.d/
