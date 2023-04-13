@@ -55,8 +55,8 @@
             "label": "docker: build",
             "type": "docker-build",
             "dockerBuild": {
-                "context": "${workspaceFolder}${pathSeperator}${input:imageName}",
-                "dockerfile": "${workspaceFolder}${pathSeperator}${input:imageName}${pathSeparator}Dockerfile",
+                "context": "${workspaceFolder}${pathSeparator}${input:imageName}",
+                "dockerfile": "${workspaceFolder}${pathSeparator}${input:imageName}${pathSeparator}Dockerfile",
                 "tag": "ghcr.io/colbylwilliams/ade-runners/${input:imageName}:${input:imageTagVersion}",
                 "customOptions": "-t \"ghcr.io/colbylwilliams/ade-runners/${input:imageName}:latest\"",
                 "buildArgs": {
