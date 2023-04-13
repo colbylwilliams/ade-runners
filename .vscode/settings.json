@@ -1,0 +1,34 @@
+{
+    "files.exclude": {
+        "**/.vs": true,
+        "**/bin": true,
+        "**/obj": true,
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/**.egg-info": true,
+        "**/__pycache__": true,
+        "**/**.dist-info": true,
+        ".venv/include": true,
+        ".venv/pyvenv.cfg": true,
+        ".venv/lib/python3.10/site-packages/[^a]*": true,
+        ".venv/lib/python3.10/site-packages/a[^z]*": true,
+        ".venv/lib/python3.10/site-packages/az[^u]*": true,
+        "LICENSE": true,
+    },
+    "python.formatting.autopep8Args": [
+        "--max-line-length=200"
+    ],
+    "isort.args": [
+        "-l",
+        "120",
+        "--lbt",
+        "1"
+    ],
+    "markdownlint.config": {
+        "MD001": false,
+        "MD023": false,
+        "MD024": false,
+        "MD025": false,
+        "MD033": false
+    }
+}

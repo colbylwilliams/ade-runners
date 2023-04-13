@@ -1,0 +1,106 @@
+{
+    "version": "2.0.0",
+    "type": "shell",
+    "options": {
+        "cwd": "${workspaceFolder}"
+    },
+    "problemMatcher": [],
+    "presentation": {
+        "showReuseMessage": false,
+    },
+    "tasks": [
+        {
+            "label": "docker: build push (latest)",
+            "detail": "Build and push the latest docker image",
+            "type": "shell",
+            "command": "echo done.",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "docker: build",
+                "docker: push (latest)"
+            ],
+            "icon": {
+                "id": "rocket",
+                "color": "terminal.ansiBlue"
+            },
+        },
+        {
+            "label": "docker: push (latest)",
+            "command": "docker",
+            "args": [
+                "push",
+                "ghcr.io/colbylwilliams/ade-runners/${input:imageName}:latest"
+            ],
+            "dependsOn": [
+                "docker: push"
+            ],
+            "icon": {
+                "id": "rocket",
+                "color": "terminal.ansiBlue"
+            },
+        },
+        {
+            "label": "docker: push",
+            "command": "docker",
+            "args": [
+                "push",
+                "ghcr.io/colbylwilliams/ade-runners/${input:imageName}:${input:imageTagVersion}"
+            ],
+            "icon": {
+                "id": "rocket",
+                "color": "terminal.ansiBlue"
+            },
+        },
+        {
+            "label": "docker: build",
+            "type": "docker-build",
+            "dockerBuild": {
+                "context": "${workspaceFolder}${pathSeperator}${input:imageName}",
+                "dockerfile": "${workspaceFolder}${pathSeperator}${input:imageName}${pathSeparator}Dockerfile",
+                "tag": "ghcr.io/colbylwilliams/ade-runners/${input:imageName}:${input:imageTagVersion}",
+                "customOptions": "-t \"ghcr.io/colbylwilliams/ade-runners/${input:imageName}:latest\"",
+                "buildArgs": {
+                    "IMAGE_VERSION": "${input:imageTagVersion}"
+                },
+                "labels": {
+                    "includeDefaults": false
+                }
+            },
+            "icon": {
+                "id": "rocket",
+                "color": "terminal.ansiBlue"
+            }
+        },
+        {
+            "label": "bicep: build",
+            "command": "${command:python.interpreterPath}",
+            "args": [
+                "tools${pathSeparator}arm.py"
+            ],
+            "icon": {
+                "id": "terminal",
+                "color": "terminal.ansiMagenta"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "imageName",
+            "type": "pickString",
+            "description": "Name of the image to build.",
+            "default": "core",
+            "options": [
+                "core",
+                "arm",
+                "azd",
+                "terraform"
+            ]
+        },
+        {
+            "id": "imageTagVersion",
+            "type": "promptString",
+            "description": "Version for this tag ex. 1.0.0 (also builds a latest version).",
+            // "default": "0.0.0"
+        },
+    ]
+}
