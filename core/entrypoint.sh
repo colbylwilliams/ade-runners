@@ -36,7 +36,7 @@ logEnvironment() {
     echo "CATALOG: $CATALOG"
     echo "CATALOG_ITEM: $CATALOG_ITEM"
     echo "ENVIRONMENT_RESOURCE_GROUP_NAME: $ENVIRONMENT_RESOURCE_GROUP_NAME"
-    
+
     trace "Listing relevant ARM environment variables"
     echo "MSI_ENDPOINT: $MSI_ENDPOINT"
     echo "ARM_MSI_ENDPOINT: $ARM_MSI_ENDPOINT"
