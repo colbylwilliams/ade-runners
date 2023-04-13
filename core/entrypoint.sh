@@ -12,10 +12,10 @@ catch() {
         error "Exit code $1 was returned from line #$2 !!!"
     fi
 
-    if [ $ADE_BLOCK_ON_FAIL == "true" ]; then
-        echo "Blocking for 600s."
-        sleep 600s
-    fi
+    # if [ $ADE_BLOCK_ON_FAIL == "true" ]; then
+    #     echo "Blocking for 600s."
+    #     sleep 600s
+    # fi
 }
 
 trace() {
@@ -72,6 +72,12 @@ if [ $ARM_USE_MSI ]; then
             break
         } || sleep 5
     done
+elif [[ ! -z "$AZURE_CLIENT_ID" && ! -z "$AZURE_CLIENT_SECRET" && ! -z "$AZURE_TENANT_ID" ]]; then
+    trace "Signing in using service principal"
+    az login --service-principal --username "$AZURE_CLIENT_ID" --password "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID" --allow-no-subscriptions --only-show-errors --output none
+    echo "done"
+else
+    trace "No Azure MSI or service principal credentials found"
 fi
 
 if [[ ! -z "$ENVIRONMENT_SUBSCRIPTION_ID" ]]; then
