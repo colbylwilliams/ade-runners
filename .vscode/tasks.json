@@ -52,6 +52,33 @@
             },
         },
         {
+            "label": "docker: try",
+            "detail": "Build and run the latest docker image",
+            "command": "docker",
+            "args": [
+                "run",
+                "--rm",
+                "--env-file",
+                "${workspaceFolder}${pathSeparator}env.list",
+                "ghcr.io/colbylwilliams/ade-runners/${input:imageName}:${input:imageTagVersion}"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "icon": {
+                "id": "rocket",
+                "color": "terminal.ansiBlue"
+            },
+            "dependsOn": [
+                "docker: build"
+            ]
+        },
+        {
             "label": "docker: build",
             "type": "docker-build",
             "dockerBuild": {
@@ -69,6 +96,26 @@
             "icon": {
                 "id": "rocket",
                 "color": "terminal.ansiBlue"
+            },
+            "dependsOn": [
+                "docker: build core"
+            ]
+        },
+        {
+            "label": "docker: build core",
+            "hide": true,
+            "type": "docker-build",
+            "dockerBuild": {
+                "context": "${workspaceFolder}${pathSeparator}core",
+                "dockerfile": "${workspaceFolder}${pathSeparator}core${pathSeparator}Dockerfile",
+                "tag": "ghcr.io/colbylwilliams/ade-runners/core:${input:imageTagVersion}",
+                "customOptions": "-t \"ghcr.io/colbylwilliams/ade-runners/core:latest\"",
+                "buildArgs": {
+                    "IMAGE_VERSION": "${input:imageTagVersion}"
+                },
+                "labels": {
+                    "includeDefaults": false
+                }
             }
         },
         {
@@ -88,7 +135,8 @@
             "id": "imageName",
             "type": "pickString",
             "description": "Name of the image to build.",
-            "default": "core",
+            // "default": "core",
+            "default": "azd",
             "options": [
                 "core",
                 "arm",
@@ -100,7 +148,7 @@
             "id": "imageTagVersion",
             "type": "promptString",
             "description": "Version for this tag ex. 1.0.0 (also builds a latest version).",
-            // "default": "0.0.0"
+            "default": "0.0.0"
         },
     ]
 }

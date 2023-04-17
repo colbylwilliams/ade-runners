@@ -36,19 +36,23 @@ LABEL maintainer="Microsoft" \
 
 COPY actions.d/* /actions.d/
 COPY entrypoint.d/* /entrypoint.d/
-COPY entrypoint.sh /entrypoint.sh
+COPY ade_core/* /ade_core/
+COPY entrypoint.py /entrypoint.py
 
-# Make entrypoint.sh and all sh and py scripts in entrypoint.d and actions.d executable
-RUN chmod +x /entrypoint.sh \
+# Make entrypoint.py and all sh and py scripts in entrypoint.d and actions.d executable
+RUN chmod +x /entrypoint.py \
     && mkdir -p /actions.d \
     && mkdir -p /entrypoint.d \
+    && mkdir -p /ade_core \
     && find /actions.d/ -type f -iname "*.sh" -exec chmod +x {} \; \
     && find /actions.d/ -type f -iname "*.py" -exec chmod +x {} \; \
     && find /entrypoint.d/ -type f -iname "*.sh" -exec chmod +x {} \; \
-    && find /entrypoint.d/ -type f -iname "*.py" -exec chmod +x {} \;
+    && find /entrypoint.d/ -type f -iname "*.py" -exec chmod +x {} \; \
+    && find /ade_core/ -type f -iname "*.sh" -exec chmod +x {} \; \
+    && find /ade_core/ -type f -iname "*.py" -exec chmod +x {} \;
 
 # Terminate container on stop
 STOPSIGNAL SIGTERM
 
 CMD [ "" ]
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint.py" ]
