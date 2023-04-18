@@ -11,7 +11,7 @@ import subprocess
 from pathlib import Path
 from typing import Union
 
-from .logger import error_exit, get_logger
+from .logger import error_exit, get_logger, trace
 
 log = get_logger(__name__)
 
@@ -34,8 +34,8 @@ def _ensure_file_path(path: Union[str, Path]) -> Path:
 
 def run(path: Union[str, Path], cwd: Union[str, Path, None] = None):
     '''Runs a python or bash script'''
-    log.info('')
-    log.info(f'Executing {path}')
+
+    trace(log, f'Executing {path}')
 
     file_path = _ensure_file_path(path)
 
@@ -66,8 +66,9 @@ def run(path: Union[str, Path], cwd: Union[str, Path, None] = None):
         error_exit(log, f'Error executing {path} {e.stderr if e.stderr else e.stdout}')
 
 
-def run_all(path: Union[str, Path], cwd: Union[str, Path, None] = None) -> int:
+def run_all(path: Union[str, Path], cwd: Union[str, Path, None] = None):
     '''Runs all python and bash scripts in a directory in ascending alphabetical order.'''
+    trace(log, f'Checking for scripts in {path}')
 
     dir_path = _ensure_dir_path(path)
 
@@ -75,19 +76,17 @@ def run_all(path: Union[str, Path], cwd: Union[str, Path, None] = None) -> int:
 
     if scripts:
         log.info(f'Found {len(scripts)} scripts')
-
         for script in scripts:
             log.info(f' {script}')
         for script in scripts:
             run(script, cwd)
-
-    return len(scripts)
+    else:
+        log.info(f'No scripts found in {path}')
 
 
 def get_action_script(path: Union[str, Path], action: str) -> Path:
     '''Looks for python or bash script in the directory'''
-    log.info('')
-    log.info(f'Checking for action scripts in {path}...')
+    trace(log, f'Checking for action script in {path}')
 
     dir_path = _ensure_dir_path(path)
 

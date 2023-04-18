@@ -31,6 +31,12 @@ def get_logger(name):
     return _logger
 
 
+def trace(log: logging.Logger, message):
+    log.info('')
+    log.info(f'>>> {message} ...')
+    log.info('')
+
+
 def error_exit(log: logging.Logger, message):
     log.error(message)
     sys.exit(message)

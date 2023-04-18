@@ -11,7 +11,7 @@ from pathlib import Path
 import ade_core.azcli as az
 import ade_core.scripts as scripts
 
-from ade_core.logger import error_exit, get_logger
+from ade_core.logger import error_exit, get_logger, trace
 from ade_core.variables import (ADE_ACTION_NAME, ADE_CATALOG_ITEM, ADE_CATALOG_ITEM_TEMPLATE, IN_RUNNER,
                                 RUNNER_ACTIONS_DIRECTORY, RUNNER_ENTRYPOINT_DIRECTORY, log_env_vars)
 
@@ -41,21 +41,16 @@ if not Path(ADE_CATALOG_ITEM_TEMPLATE).resolve().is_file():
 
 # if this image is used as a base for a custom image, the user can
 # add files to the /entrypoint.d directory to be executed at startup
-log.info('')
-log.info(f'Checking for scripts in {RUNNER_ENTRYPOINT_DIRECTORY}')
+trace(log, f'Checking for scripts in {RUNNER_ENTRYPOINT_DIRECTORY}')
 
 if RUNNER_ENTRYPOINT_DIRECTORY.is_dir():
-    ran = scripts.run_all(RUNNER_ENTRYPOINT_DIRECTORY)
-    if ran == 0:
-        log.info(f'No scripts found in {RUNNER_ENTRYPOINT_DIRECTORY}')
+    scripts.run_all(RUNNER_ENTRYPOINT_DIRECTORY)
 
 if IN_RUNNER:
     az.login()
 
 # az.login will set the default sub to ADE_ENVIRONMENT_SUBSCRIPTION_ID
 sub = az.cli('az account show')
-
-log.info('')
 log.info(f'Current subscription: {sub["name"]} ({sub["id"]})')
 
 
@@ -70,27 +65,29 @@ log.info(f'Current subscription: {sub["name"]} ({sub["id"]})')
 # Option 3: a script file following the pattern [ADE_ACTION_NAME].sh exists in the
 #           /actions.d directory (actions script directory)
 
+trace(log, f'Resolving action script for: {ADE_ACTION_NAME}')
+
 path = None
 
 if cmd_input:
+
     log.info(f'CMD input found: {cmd_input}')
     cmd_input = Path(cmd_input).resolve()
 
     if not cmd_input.is_file():
         log.info(f'CMD input script is not a file, ignoring: ({cmd_input})')
-        # error_exit(log, f'Invalid script path provided in CMD input: {script}')
+
     elif cmd_input.suffix != '.sh' and cmd_input.suffix != '.py':
         error_exit(log, f'Invalid script type provided in CMD input: {cmd_input} (only .sh and .py scripts are supported)')
+
     else:
         path = cmd_input
 
 if path is None:
     path = scripts.get_action_script(ADE_CATALOG_ITEM, ADE_ACTION_NAME)
-    # path = get_action_script(ADE_CATALOG_ITEM).resolve(), ADE_ACTION_NAME)
 
 if path is None:
     path = scripts.get_action_script(RUNNER_ACTIONS_DIRECTORY, ADE_ACTION_NAME)
-    # path = get_action_script(ACTIONS_D, ADE_ACTION_NAME)
 
 if path is not None:
     scripts.run(path, ADE_CATALOG_ITEM)

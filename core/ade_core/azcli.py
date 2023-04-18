@@ -8,7 +8,7 @@ import os
 import shutil
 import subprocess
 
-from .logger import error_exit, get_logger
+from .logger import error_exit, get_logger, trace
 from .variables import ADE_ENVIRONMENT_SUBSCRIPTION_ID, ARM_USE_MSI, ade_debug
 
 log = get_logger(__name__)
@@ -38,16 +38,14 @@ def cli(command, log_command=True, log_output=True):
         args.append('--debug')
 
     try:
-        log.info('')
-
         if log_command == False:
             # we still want to log the core command without the user-provided arguments so find the
             # index of the first arg starting with '-' and only log the args in front of it
             # for example, the command: 'az login -u foo -p bar --tenant baz' logs "az login ****"
             if (first_arg := next((i for i, a in enumerate(args) if a.startswith('-')), -1)) != -1:
-                log.info(f'Running az cli command: {" ".join(args[:first_arg])} ****')
+                trace(log, f'Running az cli command: {" ".join(args[:first_arg])} ****')
         else:
-            log.info(f'Running az cli command: {" ".join(args)}')
+            trace(log, f'Running az cli command: {" ".join(args)}')
 
         proc = subprocess.run(args, capture_output=True, check=True, text=True)
 
@@ -70,7 +68,8 @@ def cli(command, log_command=True, log_output=True):
 
 
 def login():
-    log.info('')
+    trace(log, 'Signing in to Azure CLI')
+
     az_client_id = os.environ.get('AZURE_CLIENT_ID')
     az_client_secret = os.environ.get('AZURE_CLIENT_SECRET')
     az_tenant_id = os.environ.get('AZURE_TENANT_ID')
@@ -85,6 +84,5 @@ def login():
         cli(f'az login --service-principal -u {az_client_id} -p {az_client_secret} -t {az_tenant_id} --allow-no-subscriptions', log_command=False)
 
     if ADE_ENVIRONMENT_SUBSCRIPTION_ID:
-        log.info('')
-        log.info(f'Setting subscription to {ADE_ENVIRONMENT_SUBSCRIPTION_ID}')
+        trace(log, f'Setting subscription to {ADE_ENVIRONMENT_SUBSCRIPTION_ID}')
         cli(f'az account set --subscription {ADE_ENVIRONMENT_SUBSCRIPTION_ID}')

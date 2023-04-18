@@ -42,10 +42,12 @@ azd version
 trace "Running: git version"
 git --version
 
-trace "Setting git user.name to ade"
+trace "Setting up git config"
+
+echo "Setting git user.name to ade"
 git config --global user.name "ade"
 
-trace "Setting git usere.mail to ade@microsoft.com"
+echo "Setting git usere.mail to ade@microsoft.com"
 git config --global user.email "ade@microsoft.com"
 
 trace "Running: azd init -t todo-python-mongo"
