@@ -140,3 +140,5 @@ local.settings.json
 local.parameters.json
 
 env.list
+.azure
+deploy

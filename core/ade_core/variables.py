@@ -125,17 +125,20 @@ if (ADE_CATALOG_ITEM_NAME := ADE_CATALOG_ITEM):
 if (ADE_CATALOG_ITEM := (Path(ADE_CATALOG) / ADE_CATALOG_ITEM_NAME).resolve().as_posix()):
     os.environ['ADE_CATALOG_ITEM'] = ADE_CATALOG_ITEM
 
-# ADE_TEMPLATE_PATH should always be treated as a relative path (I think)
-# so strip './' or '/' prefix from the path so we can resolve the absolute path
-# for the value of ADE_CATALOG_ITEM_TEMPLATE
-if (ADE_TEMPLATE_PATH := _getenv('ADE_TEMPLATE_PATH')):
-    if ADE_TEMPLATE_PATH.startswith('./'):
-        ADE_TEMPLATE_PATH = ADE_TEMPLATE_PATH[2:]
-    if ADE_TEMPLATE_PATH.startswith('/'):
-        ADE_TEMPLATE_PATH = ADE_TEMPLATE_PATH[1:]
+# # ADE_TEMPLATE_PATH should always be treated as a relative path (I think)
+# # so strip './' or '/' prefix from the path so we can resolve the absolute path
+# # for the value of ADE_CATALOG_ITEM_TEMPLATE
+# if (ADE_TEMPLATE_PATH := _getenv('ADE_TEMPLATE_PATH')):
+#     if ADE_TEMPLATE_PATH.startswith('./'):
+#         ADE_TEMPLATE_PATH = ADE_TEMPLATE_PATH[2:]
+#     if ADE_TEMPLATE_PATH.startswith('/'):
+#         ADE_TEMPLATE_PATH = ADE_TEMPLATE_PATH[1:]
+
+# this is currently Catalog/CatalogItem/template
+ADE_TEMPLATE_PATH = _getenv('ADE_TEMPLATE_PATH')
 
 # use ADE_TEMPLATE_PATH to resolve the full path to the template file
-ADE_CATALOG_ITEM_TEMPLATE = (Path(ADE_CATALOG_ITEM) / ADE_TEMPLATE_PATH).resolve().as_posix()
+ADE_CATALOG_ITEM_TEMPLATE = (Path(ADE_ACTION_REPOSITORY) / ADE_TEMPLATE_PATH).resolve().as_posix()
 os.environ['ADE_CATALOG_ITEM_TEMPLATE'] = ADE_CATALOG_ITEM_TEMPLATE
 
 
