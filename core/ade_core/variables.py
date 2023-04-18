@@ -85,6 +85,7 @@ def log_env_vars(log: Logger):
 
 # hard code this for now
 ADE_ACTION_REPOSITORY = '/mnt/repository'
+os.environ['ADE_ACTION_REPOSITORY'] = ADE_ACTION_REPOSITORY
 
 # the core docker image will always set ADE_RUNNER to 1
 # this allows scripts behave differently when they are

@@ -26,9 +26,11 @@ def cli(command, log_command=True, log_output=True):
     # resolve the full path to az (e.g. /usr/local/bin/az)
     az = shutil.which('az')
 
+    # remove 'az' from the command
     if args[0] == 'az':
         args.pop(0)
 
+    # add the full path to az
     if args[0] != az:
         args = [az] + args
 
@@ -39,9 +41,9 @@ def cli(command, log_command=True, log_output=True):
 
     try:
         if log_command == False:
-            # we still want to log the core command without the user-provided arguments so find the
-            # index of the first arg starting with '-' and only log the args in front of it
-            # for example, the command: 'az login -u foo -p bar --tenant baz' logs "az login ****"
+            # we still want to log the core command without the user-provided arguments,
+            # so we find the index of the first arg starting with '-' and only log the args before
+            # e.g. command: 'az login -u foo -p bar --tenant baz', will log: "az login ****"
             if (first_arg := next((i for i, a in enumerate(args) if a.startswith('-')), -1)) != -1:
                 trace(log, f'Running az cli command: {" ".join(args[:first_arg])} ****')
         else:

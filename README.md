@@ -1,14 +1,86 @@
-# ade-runners
+# Azure Deployment Environments Runners
 
 [![Images](https://github.com/colbylwilliams/ade-runners/actions/workflows/images.yml/badge.svg)](https://github.com/colbylwilliams/ade-runners/actions/workflows/images.yml)
 
-| Image                      | Description                                                                                                                                       |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [core][pkg-core]           | The Azure Deployment Environments Core runner is used as a base image for all Deployment Environment runner images.                               |
-| [arm][pkg-arm]             | The Azure Deployment Environments ARM and Bicep runner is used as the runner for environment catalog itmes that reference ARM or Bicep templates. |
-| [azd][pkg-azd]             | The Azure Deployment Environments AZD runner is used as the runner for environment catalog itmes that reference AZD templates.                    |
-| [terraform][pkg-terraform] | The Azure Deployment Environments Terraform runner is used as the runner for environment catalog itmes that reference Terraform templates.        |
+| Image                   | Description                                                                                                         | Version                                                                                                                 |
+| :---------------------- | :------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------- |
+| [core](#core)           | The Core runner is used as a base image for all Deployment Environment runner images.                               | [![core](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/core/latest_tag?label=latest)][pkg-core]                |
+| [arm](#arm)             | The ARM and Bicep runner is used as the runner for environment catalog itmes that reference ARM or Bicep templates. | [![arm](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/arm/latest_tag?label=latest)][pkg-arm]                   |
+| [azd](#azd)             | The AZD runner is used as the runner for environment catalog itmes that reference AZD templates.                    | [![azd](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/azd/latest_tag?label=latest)][pkg-azd]                   |
+| [terraform](#terraform) | The Terraform runner is used as the runner for environment catalog itmes that reference Terraform templates.        | [![terraform](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/terraform/latest_tag?label=latest)][pkg-terraform] |
 
+## Environment Variables
+
+| Name                                  | Description                                                                                                                                                                                                                                                                                                                                                                                                              |
+| :------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ADE_RUNNER`                          | Always set to `true` in the [core](#core) docker image, and any image created [`FROM`][docker-from] core (including [arm](#arm), [azd](#azd), and [terraform](#terraform)).<br/><br/>You can use this variable to differentiate when scripts are being run locally or by a runner container.                                                                                                                             |
+| `ADE_DEBUG`                           | Set to `true` to enable debug logging.<br/><br/>Custom action scripts should use this to enable debug logging and propagate to tools they use (e.g. pass the `--debug` flag to azure cli commands).                                                                                                                                                                                                                      |
+| `ADE_DEVCENTER_NAME`                  | The name of the DevCenter the environment belongs to. For example, `MyDevCenter`.                                                                                                                                                                                                                                                                                                                                        |
+| `ADE_PROJECT_NAME`                    | The name of the Project the environment belongs to. For example, `MyProject`.                                                                                                                                                                                                                                                                                                                                            |
+| `ADE_ENVIRONMENT_NAME`                | Then name of the Environemnt. For example, `MyEnvironment`.                                                                                                                                                                                                                                                                                                                                                              |
+| `ADE_ENVIRONMENT_LOCATION`            | The [region][azure-regions] of the resource group where the environment is deployed. For example, `eastus`. This is the same as the Project's region.                                                                                                                                                                                                                                                                    |
+| `ADE_ENVIRONMENT_TYPE`                | The name of the Project Environment Type used to deploy the environment. For example, `Dev` or `Prod`.                                                                                                                                                                                                                                                                                                                   |
+| `ADE_ENVIRONMENT_SUBSCRIPTION`        | The resource ID of  subscription where the environment's resources will be deployed. For example, `/subscriptions/e5ab56ae-6c72-4a5c-87c8-495590c34828`.                                                                                                                                                                                                                                                                 |
+| `ADE_ENVIRONMENT_SUBSCRIPTION_ID`     | The ID (GUID) of the subscription where the environment's resources will be deployed. For example, `e5ab56ae-6c72-4a5c-87c8-495590c34828`.                                                                                                                                                                                                                                                                               |
+| `ADE_ENVIRONMENT_RESOURCE_GROUP_NAME` | The name of the resource group where the environment's resources will be deployed. For example, `MyResourceGroup`.                                                                                                                                                                                                                                                                                                       |
+| `ADE_ENVIRONMENT_RESOURCE_GROUP_ID`   | The resource ID resource group where the environment's resources will be deployed. For example, `/subscriptions/e5ab56ae-6c72-4a5c-87c8-495590c34828/resourceGroups/MyResourceGroup`                                                                                                                                                                                                                                     |
+| `ADE_ACTION_NAME`                     | The action to execute on the environment. For example, `deploy` or `delete`.<br/><br/>This determines which script the runner should execute.<br/>**TODO**                                                                                                                                                                                                                                                               |
+| `ADE_ACTION_PARAMETERS`               | A JSON string with the parameters provided when the user initiated the action on the environment. For example, `{'param':'value}`.                                                                                                                                                                                                                                                                                       |
+| `ADE_ACTION_STORAGE`                  | The path on the runner to a persistent storage directory. For example, `/mnt/storage`.<br/><br/>This directory will persist accross all actions run for an environment. Files saved to this directory will be available to future actions on the evironment. This is where you would store something like terraform state files.                                                                                         |
+| `ADE_ACTION_OUTPUT`                   | The path on the runner to a log file.<br/>For example, `/mnt/storage/action-output.log`.                                                                                                                                                                                                                                                                                                                                 |
+| `ADE_ACTION_TEMP`                     | The path on the runner to a temporary storage directory. For example, `/mnt/temporary`.<br/><br/>This directory will not be persisted between actions.                                                                                                                                                                                                                                                                   |
+| `ADE_ACTION_REPOSITORY`               | The path on the runner to a repository storage directory. For example, `/mnt/repository`.<br/><br/>The Catalog repo will be cloned in this directory. It will not be persisted between actions.                                                                                                                                                                                                                          |
+| `ADE_CATALOG_NAME`                    | The name of the Catalog that contains the catalog item to provision the environment. For example, `Catalog`.                                                                                                                                                                                                                                                                                                             |
+| `ADE_CATALOG_ITEM_NAME`               | The name of the Catalog Item that defines how to provision the environment's resources. For example, `Item`.                                                                                                                                                                                                                                                                                                             |
+| `ADE_CATALOG`                         | The path on the runner to the cloned catalog repository. For example, `/mnt/repository/Catalog`.                                                                                                                                                                                                                                                                                                                         |
+| `ADE_CATALOG_ITEM`                    | The absolute path to the catalog item directory in the cloned catalog repo. For example, `/mnt/repository/Catalog/Item`.                                                                                                                                                                                                                                                                                                 |
+| `ADE_CATALOG_ITEM_TEMPLATE`           | The absolute path to the catalog item's template file. For example, `/mnt/repository/Catalog/Item/template.bicep`.                                                                                                                                                                                                                                                                                                       |
+| `ADE_TIMESTAMP`                       | A timestamp set at the start of the container. For example, `20230418051301`.<br/>This can be useful for creating file names unique to the action.                                                                                                                                                                                                                                                                       |
+| `ARM_SUBSCRIPTION_ID`                 | The subscription ID (GUID) containing the project environment type's managed identity. For example, `e5ab56ae-6c72-4a5c-87c8-495590c34828`.<br/>This identity is used to authenticate with Azure and perform the deployment.                                                                                                                                                                                             |
+| `ARM_TENANT_ID`                       | The Identity's tenant ID (GUID) containing the project environment type's managed identity. For example, `ecqudh4c-6b8f-4558-a7b7-030ff99b57e0`.<br/>This identity is used to authenticate with Azure and perform the deployment.                                                                                                                                                                                        |
+| `ARM_USE_MSI`                         | The runner will always set this to `true`.<br/><br/>When `true` the project environment type's managed identity is used to authenticate to Azure and perform the deployment.<br/>To override this behavior in a custom container (not reccomended), and authenticate using a service principal instead, set `ARM_USE_MSI` to `false` and provide values for `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_CLIENT_SECRET`. |
+| `RUNNER_ACTIONS_DIRECTORY`            | The path on the runner to the directory containing [scripts](#scripts) that perform actions on the environment. For example, `/actions.d`.<br/><br/>**TODO**                                                                                                                                                                                                                                                             |
+| `RUNNER_ENTRYPOINT_DIRECTORY`         | The path on the runner to the directory containing entrypoint [scripts](#scripts). For example, `/entrypoint.d`.<br/><br/>All script files with the .sh and .py extensions will be executed in alphabetical order when the container starts.                                                                                                                                                                             |
+
+### Development
+
+| Name                 | Description                                                                                                                                                                                                                                                                                          |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RUNNER_LOCAL_BUILD` | You can set this variable to `true` when developing custom images [`FROM`][docker-from] core.<br/><br>When running containers locally, some of the configuration and volumns won't be present. Setting this variable to `true` will mock some of the container's configuration match the ADE runner. |
+
+## Scripts
+
+**TODO**
+
+```bash
+arm/
+├── actions.d/
+│   ├── delete.py       # (or delete.sh) deletes the environment
+│   └── deploy.sh       # (or deploy.py) deploys the environment
+└── entrypoint.d/
+    ├── a_run_this.py   # all .sh and .py scripts in entrypoint.d
+    ├── b_then_this.sh  # are executed in alphabetical order when
+    └── c_then_this.py  # the container starts
+```
+
+## Core
+
+**TODO**
+
+## ARM
+
+**TODO**
+
+## AZD
+
+**TODO**
+
+## Terraform
+
+**TODO**
+
+[azure-regions]: https://learn.microsoft.com/en-us/azure/reliability/availability-zones-overview#regions
+[docker-from]: https://docs.docker.com/engine/reference/builder/#from
 [pkg-core]: https://github.com/colbylwilliams/ade-runners/pkgs/container/ade-runners%2Fcore
 [pkg-arm]: https://github.com/colbylwilliams/ade-runners/pkgs/container/ade-runners%2Farm
 [pkg-azd]: https://github.com/colbylwilliams/ade-runners/pkgs/container/ade-runners%2Fazd

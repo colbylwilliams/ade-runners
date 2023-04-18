@@ -57,16 +57,16 @@ sub = az.cli('az account show')
 log.info(f'Current subscription: {sub["name"]} ({sub["id"]})')
 
 
-# the script to execute is defined by the following options
+# the action script to execute is defined by the following options
 # (the first option matching an executable script file wins)
 #
 # Option 1: a script path is provided as docker CMD command
 #
-# Option 2: a script file following the pattern [ADE_ACTION_NAME].sh exists in the
-#           catalog item directory
+# Option 2: a script file following the pattern [ADE_ACTION_NAME].[sh|py]
+#           exists in the ADE_CATALOG_ITEM directory
 #
-# Option 3: a script file following the pattern [ADE_ACTION_NAME].sh exists in the
-#           /actions.d directory (actions script directory)
+# Option 3: a script file following the pattern [ADE_ACTION_NAME].[sh|py]
+#           exists in the /actions.d directory (actions script directory)
 
 
 path = None
