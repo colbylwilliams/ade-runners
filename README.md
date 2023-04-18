@@ -2,12 +2,12 @@
 
 [![Images](https://github.com/colbylwilliams/ade-runners/actions/workflows/images.yml/badge.svg)](https://github.com/colbylwilliams/ade-runners/actions/workflows/images.yml)
 
-| Image                   | Description                                                                                                         | Version                                                                                                                 |
-| :---------------------- | :------------------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------- |
-| [core](#core)           | The Core runner is used as a base image for all Deployment Environment runner images.                               | [![core](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/core/latest_tag?label=latest)][pkg-core]                |
-| [arm](#arm)             | The ARM and Bicep runner is used as the runner for environment catalog itmes that reference ARM or Bicep templates. | [![arm](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/arm/latest_tag?label=latest)][pkg-arm]                   |
-| [azd](#azd)             | The AZD runner is used as the runner for environment catalog itmes that reference AZD templates.                    | [![azd](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/azd/latest_tag?label=latest)][pkg-azd]                   |
-| [terraform](#terraform) | The Terraform runner is used as the runner for environment catalog itmes that reference Terraform templates.        | [![terraform](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/terraform/latest_tag?label=latest)][pkg-terraform] |
+| Image                   | Description                                                                                             | Version                                                                                                                 |
+| :---------------------- | :------------------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------- |
+| [core](#core)           | The Core runner is used as a base image for all other runners. Use this to create custom runner images. | [![core](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/core/latest_tag?label=latest)][pkg-core]                |
+| [arm](#arm)             | The ARM and Bicep runner is used for environment catalog itmes that reference ARM or Bicep templates.   | [![arm](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/arm/latest_tag?label=latest)][pkg-arm]                   |
+| [azd](#azd)             | The AZD runner is used for environment catalog itmes that reference AZD templates.                      | [![azd](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/azd/latest_tag?label=latest)][pkg-azd]                   |
+| [terraform](#terraform) | The Terraform runner is used for environment catalog itmes that reference Terraform templates.          | [![terraform](https://ghcr-badge.egpl.dev/colbylwilliams/ade-runners/terraform/latest_tag?label=latest)][pkg-terraform] |
 
 ## Environment Variables
 
