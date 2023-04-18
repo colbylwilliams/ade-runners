@@ -29,6 +29,9 @@ log.info('##################################')
 log.info('')
 log.info(f'IN_RUNNER: {IN_RUNNER}')
 
+log.info('')
+log.info('Environment variables:')
+log.info('======================')
 log_env_vars(log)
 
 # ensure the path to the catalog item is an existing directory
@@ -41,7 +44,7 @@ if not Path(ADE_CATALOG_ITEM_TEMPLATE).resolve().is_file():
 
 # if this image is used as a base for a custom image, the user can
 # add files to the /entrypoint.d directory to be executed at startup
-trace(log, f'Checking for scripts in {RUNNER_ENTRYPOINT_DIRECTORY}')
+trace(log, f'Checking for entrypoint scripts in {RUNNER_ENTRYPOINT_DIRECTORY}')
 
 if RUNNER_ENTRYPOINT_DIRECTORY.is_dir():
     scripts.run_all(RUNNER_ENTRYPOINT_DIRECTORY)
@@ -65,12 +68,11 @@ log.info(f'Current subscription: {sub["name"]} ({sub["id"]})')
 # Option 3: a script file following the pattern [ADE_ACTION_NAME].sh exists in the
 #           /actions.d directory (actions script directory)
 
-trace(log, f'Resolving action script for: {ADE_ACTION_NAME}')
 
 path = None
 
+trace(log, f'Checking for {ADE_ACTION_NAME} script in docker CMD')
 if cmd_input:
-
     log.info(f'CMD input found: {cmd_input}')
     cmd_input = Path(cmd_input).resolve()
 
@@ -82,11 +84,15 @@ if cmd_input:
 
     else:
         path = cmd_input
+else:
+    log.info('No {ADE_ACTION_NAME} script found in docker CMD')
 
 if path is None:
+    trace(log, f'Checking for {ADE_ACTION_NAME} script catalog item folder')
     path = scripts.get_action_script(ADE_CATALOG_ITEM, ADE_ACTION_NAME)
 
 if path is None:
+    trace(log, f'Checking for {ADE_ACTION_NAME} runner actions folder')
     path = scripts.get_action_script(RUNNER_ACTIONS_DIRECTORY, ADE_ACTION_NAME)
 
 if path is not None:

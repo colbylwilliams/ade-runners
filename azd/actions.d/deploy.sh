@@ -6,7 +6,7 @@
 set -e # exit on error
 
 trace() {
-    echo -e "\n>>> $@ ...\n"
+    echo -e "\n>>> $@ ..."
 }
 
 # AZURE_ENV_NAME is the name of the key used to store the envname property in the environment.

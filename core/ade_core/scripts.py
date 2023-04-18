@@ -68,7 +68,7 @@ def run(path: Union[str, Path], cwd: Union[str, Path, None] = None):
 
 def run_all(path: Union[str, Path], cwd: Union[str, Path, None] = None):
     '''Runs all python and bash scripts in a directory in ascending alphabetical order.'''
-    trace(log, f'Checking for scripts in {path}')
+    log.info(f'Checking for scripts in {path}')
 
     dir_path = _ensure_dir_path(path)
 
@@ -86,7 +86,7 @@ def run_all(path: Union[str, Path], cwd: Union[str, Path, None] = None):
 
 def get_action_script(path: Union[str, Path], action: str) -> Path:
     '''Looks for python or bash script in the directory'''
-    trace(log, f'Checking for action script in {path}')
+    log.info(f'Checking for {action} script in {path}')
 
     dir_path = _ensure_dir_path(path)
 
@@ -104,5 +104,5 @@ def get_action_script(path: Union[str, Path], action: str) -> Path:
         log.info(f'Found {action} script: {action_script}')
         return action_script
 
-    log.info(f'No {action} script found')
+    log.info(f'No {action} script found in {path}')
     return None

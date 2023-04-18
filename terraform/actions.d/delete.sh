@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 
 trace() {
-    echo -e "\n>>> $@ ...\n"
+    echo -e "\n>>> $@ ..."
 }
 
 readonly EnvironmentState="$ADE_ACTION_STORAGE/environment.tfstate"

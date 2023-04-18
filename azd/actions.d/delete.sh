@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 
 trace() {
-    echo -e "\n>>> $@ ...\n"
+    echo -e "\n>>> $@ ..."
 }
 
 trace "Running: azd --help"

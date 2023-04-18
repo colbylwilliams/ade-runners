@@ -34,7 +34,6 @@ def get_logger(name):
 def trace(log: logging.Logger, message):
     log.info('')
     log.info(f'>>> {message} ...')
-    log.info('')
 
 
 def error_exit(log: logging.Logger, message):

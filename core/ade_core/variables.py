@@ -28,12 +28,6 @@ _ADE_LEGACY_VARS = {
     'ADE_ENVIRONMENT_RESOURCE_GROUP_NAME': ['ENVIRONMENT_RESOURCE_GROUP_NAME'],
 }
 
-# if a env var key contains these words, don't log it
-_ADE_SENSITIVE_KEYS = ('SECRET', 'PASSWORD', 'TOKEN', 'PRIVATE', '_KEY', 'USER')
-
-# TODO: remove legacy
-_ADE_ENV_PREFIXES = ('ADE_', 'RUNNER_', 'AZURE_', 'ARM_', 'MSI_', 'ENVIRONMENT_', 'ACTION_', 'CATALOG')
-
 
 def _getenv(key: str, required=True) -> str:
     '''helper function to get the value of environment variables'''
@@ -63,6 +57,30 @@ def _getenv(key: str, required=True) -> str:
 def _getenv_bool(key: str) -> bool:
     value = _getenv(key, required=False)
     return bool(value)
+
+
+# ADE_DEBUG variable can be set by a script after initial import
+# so it must be a function to return the most current value
+# if set to true, scripts should propagate to tools they use
+# e.g. pass the --debug flag to the az cli
+def ade_debug() -> bool:
+    return _getenv_bool('ADE_DEBUG')
+
+
+# if a env var starts with one of the following, log it
+_ADE_ENV_PREFIXES = ('ADE_', 'RUNNER_', 'AZURE_', 'ARM_', 'MSI_')
+
+# if a env var key contains these words, don't log it
+_ADE_SENSITIVE_KEYS = ('SECRET', 'PASSWORD', 'TOKEN', 'PRIVATE', '_KEY', 'USER')
+
+
+def log_env_vars(log: Logger):
+    '''Prints all relevant environment variables to the log'''
+    for key, value in os.environ.items():
+        key_upper = key.upper()
+        if key_upper.startswith(_ADE_ENV_PREFIXES):
+            log_value = '****' if any(x in key_upper for x in _ADE_SENSITIVE_KEYS) else value
+            log.info(f'{key}: {log_value}')
 
 
 # hard code this for now
@@ -169,24 +187,3 @@ os.environ['RUNNER_ACTIONS_DIRECTORY'] = RUNNER_ACTIONS_DIRECTORY.as_posix()
 
 RUNNER_ENTRYPOINT_DIRECTORY = Path('/entrypoint.d') if IN_RUNNER else Path(__file__).resolve().parent.parent / 'entrypoint.d'
 os.environ['RUNNER_ENTRYPOINT_DIRECTORY'] = RUNNER_ENTRYPOINT_DIRECTORY.as_posix()
-
-
-# user or scripts can set the ADE_DEBUG environment variable.
-# if set to true, scripts should propagate to tools they use
-# e.g. pass the --debug flag to the az cli
-# this env variable can be set by a script after initial import
-# so it must be a function to return the most current value
-def ade_debug() -> bool:
-    return _getenv_bool('ADE_DEBUG')
-
-
-def log_env_vars(log: Logger):
-    '''Prints all relevant environment variables to the log'''
-    log.info('')
-    log.info('Environment variables:')
-    log.info('======================')
-    for key, value in os.environ.items():
-        key_upper = key.upper()
-        if key_upper.startswith(_ADE_ENV_PREFIXES):
-            log_value = '****' if any(x in key_upper for x in _ADE_SENSITIVE_KEYS) else value
-            log.info(f'{key}: {log_value}')
