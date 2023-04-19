@@ -6,7 +6,7 @@
 DIR=$(dirname "$0")
 . $DIR/_common.sh
 
-deploymentName=$(date +"%Y-%m-%d-%H%M%S%z")
+deploymentName=$(date +"%Y-%m-%d-%H%M%S")
 
 echo -e "Deleting resource group: $ADE_ENVIRONMENT_RESOURCE_GROUP_NAME"
 

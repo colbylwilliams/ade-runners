@@ -10,7 +10,7 @@ trace() {
     echo -e "\n>>> $@ ..."
 }
 
-deploymentName=$(date +"%Y-%m-%d-%H%M%S%z")
+deploymentName=$(date +"%Y-%m-%d-%H%M%S")
 deploymentOutput=""
 
 if [ ! -z "$(find . -name '*.bicep' -print -quit)" ] ; then
