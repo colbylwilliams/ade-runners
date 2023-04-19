@@ -90,15 +90,18 @@ def get_action_script(path: Union[str, Path], action: str) -> Path:
 
     dir_path = _ensure_dir_path(path)
 
-    sh_path = dir_path / f'{action}.sh'
-    py_path = dir_path / f'{action}.py'
+    # TODO: figure out best way to handle casing
+    action_lower = action.lower()
+
+    sh_path = dir_path / f'{action_lower}.sh'
+    py_path = dir_path / f'{action_lower}.py'
 
     sh_isfile = sh_path.is_file()
     py_isfile = py_path.is_file()
 
     if sh_isfile or py_isfile:
         if sh_isfile and py_isfile:
-            error_exit(log, f'Found both {action}.sh and {action}.py in {path}. Only one script file allowed.')
+            error_exit(log, f'Found both {action_lower}.sh and {action_lower}.py in {path}. Only one script file allowed.')
 
         action_script = sh_path if sh_isfile else py_path
         log.info(f'Found {action} script: {action_script}')
