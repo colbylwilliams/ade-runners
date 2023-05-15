@@ -9,7 +9,8 @@ import shutil
 import subprocess
 
 from .logger import error_exit, get_logger, trace
-from .variables import ADE_ENVIRONMENT_SUBSCRIPTION_ID, ARM_USE_MSI, ade_debug
+from .variables import (ADE_ENVIRONMENT_LOCATION, ADE_ENVIRONMENT_RESOURCE_GROUP_NAME, ADE_ENVIRONMENT_SUBSCRIPTION_ID,
+                        ARM_USE_MSI, ade_debug)
 
 log = get_logger(__name__)
 
@@ -88,3 +89,10 @@ def login():
     if ADE_ENVIRONMENT_SUBSCRIPTION_ID:
         trace(log, f'Setting subscription to {ADE_ENVIRONMENT_SUBSCRIPTION_ID}')
         cli(f'az account set --subscription {ADE_ENVIRONMENT_SUBSCRIPTION_ID}')
+
+
+def set_defaults():
+    trace(log, 'Setting Azure CLI defaults')
+    cli(f'az configure -d location={ADE_ENVIRONMENT_LOCATION}')
+    cli(f'az configure -d group={ADE_ENVIRONMENT_RESOURCE_GROUP_NAME}')
+    cli('az configure -l')

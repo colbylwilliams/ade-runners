@@ -60,7 +60,7 @@ def run(path: Union[str, Path], cwd: Union[str, Path, None] = None):
         if proc.stdout:
             for line in proc.stdout.splitlines():
                 log.info(line)
-        if proc.stderr:
+        if proc.returncode != 0 and proc.stderr:
             error_exit(log, f'\n\n{proc.stderr}')
     except subprocess.CalledProcessError as e:
         error_exit(log, f'Error executing {path} {e.stderr if e.stderr else e.stdout}')

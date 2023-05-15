@@ -15,6 +15,15 @@ readonly EnvironmentVars="$ADE_ACTION_TEMP/environment.tfvars.json"
 
 echo "$ADE_ACTION_PARAMETERS" > $EnvironmentVars
 
+# https://developer.hashicorp.com/terraform/cli/config/environment-variables#tf_input
+export TF_INPUT=0
+
+# https://developer.hashicorp.com/terraform/cli/config/environment-variables#tf_cli_args-and-tf_cli_args_name
+TF_CLI_ARGS="-input=false"
+
+# https://developer.hashicorp.com/terraform/cli/config/environment-variables#tf_in_automation
+export TF_IN_AUTOMATION=true
+
 trace "Terraform Info"
 terraform -version
 

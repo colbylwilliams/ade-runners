@@ -28,6 +28,7 @@ log.info('Azure Depoyment Environment Runner')
 log.info('##################################')
 log.info('')
 log.info(f'IN_RUNNER: {IN_RUNNER}')
+log.info(f'VERSION: ')
 
 log.info('')
 log.info('Environment variables:')
@@ -85,7 +86,7 @@ if cmd_input:
     else:
         path = cmd_input
 else:
-    log.info('No {ADE_ACTION_NAME} script found in docker CMD')
+    log.info(f'No {ADE_ACTION_NAME} script found in docker CMD')
 
 if path is None:
     trace(log, f'Checking for {ADE_ACTION_NAME} script catalog item folder')

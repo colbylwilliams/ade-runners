@@ -33,6 +33,8 @@ LABEL maintainer="Microsoft" \
     org.label-schema.vcs-url="https://github.com/colbylwilliams/ade-runners.git" \
     org.label-schema.docker.cmd="docker run ghcr.io/colbylwilliams/ade-runners/azd:$IMAGE_VERSION"
 
+# install terraform
+RUN apk add --no-cache terraform --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 
 # install azd
 # RUN curl https://azure-dev.azureedge.net/azd/standalone/release/azd-linux-amd64.tar.gz

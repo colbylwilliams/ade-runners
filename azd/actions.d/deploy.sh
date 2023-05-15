@@ -9,6 +9,11 @@ trace() {
     echo -e "\n>>> $@ ..."
 }
 
+error() {
+    echo "Error: $@" 1>&2
+}
+
+
 # AZURE_ENV_NAME is the name of the key used to store the envname property in the environment.
 AZURE_ENV_NAME="$ADE_ENVIRONMENT_TYPE"
 
@@ -32,6 +37,14 @@ AZURE_TENANT_ID="$ARM_TENANT_ID"
 
 # AZURE_RESOURCE_GROUP is the name of the azure resource group that should be used for deployments
 AZURE_RESOURCE_GROUP="$ADE_ENVIRONMENT_RESOURCE_GROUP_NAME"
+
+trace "Getting template name from action parameters"
+
+templateName=$(echo $ADE_ACTION_PARAMETERS | jq -r '.template // empty' )
+if [ -z "$templateName" ]; then
+
+echo "templateName: $templateName"
+
 
 trace "Running: azd --help"
 azd --help
